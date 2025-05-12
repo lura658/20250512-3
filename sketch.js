@@ -2,7 +2,6 @@ let facemesh;
 let video;
 let predictions = [];
 
-// 嘴唇、左眼、右眼的點位編號
 const lipsPoints = [
   409,270,269,267,0,37,39,40,185,61,146,91,181,84,17,
   314,405,321,375,291,76,77,90,180,85,16,315,404,320,
@@ -19,20 +18,22 @@ const rightEyePoints = [
 
 function setup() {
   createCanvas(640, 480);
-  video = createCapture(VIDEO);
+
+  video = createCapture(VIDEO, () => {
+    console.log("Camera ready");
+  });
   video.size(width, height);
   video.hide();
 
-  // 正確拼寫是 faceMesh，不是 facemesh
+  // 使用正確的名稱：faceMesh（注意大小寫）
   facemesh = ml5.faceMesh(video, modelReady);
   facemesh.on("predict", results => {
     predictions = results;
   });
 }
 
-
 function modelReady() {
-  console.log("FaceMesh model ready!");
+  console.log("FaceMesh model loaded");
 }
 
 function draw() {
@@ -40,7 +41,7 @@ function draw() {
 
   if (predictions.length > 0) {
     const keypoints = predictions[0].scaledMesh;
-    stroke(255, 0, 0); // 紅色
+    stroke(255, 0, 0);
     strokeWeight(5);
     noFill();
 
@@ -54,8 +55,10 @@ function drawPath(points, keypoints) {
   beginShape();
   for (let i = 0; i < points.length; i++) {
     const index = points[i];
-    const [x, y] = keypoints[index];
-    vertex(x, y);
+    if (keypoints[index]) {
+      const [x, y] = keypoints[index];
+      vertex(x, y);
+    }
   }
   endShape();
 }
