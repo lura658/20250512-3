@@ -23,11 +23,13 @@ function setup() {
   video.size(width, height);
   video.hide();
 
-  facemesh = ml5.facemesh(video, modelReady);
+  // 正確拼寫是 faceMesh，不是 facemesh
+  facemesh = ml5.faceMesh(video, modelReady);
   facemesh.on("predict", results => {
     predictions = results;
   });
 }
+
 
 function modelReady() {
   console.log("FaceMesh model ready!");
